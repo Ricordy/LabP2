@@ -33,11 +33,17 @@ public class Mundo {
 		//Atribuir valores as variavies globais
 		numLinhas = mundoInicial.length;
 		numColunas = mundoInicial[0].length;
+		//verificar o tamanho do tabuleiro antes de proseeguir
 		if (numLinhas < 2 || numColunas < 2) {
             throw new IllegalArgumentException("Mundo demasiado pequeno!");
         }
-		//verificar o tamanho do tabuleiro antes de proseeguir
-		mundo = mundoInicial;
+		// criar uma copia do array copiando celula a celula para evitar referenciar a variavel original
+		mundo = new int[numLinhas][numColunas];
+		for (int i = 0; i < numLinhas; i++) {
+			for (int j = 0; j < numColunas; j++) {
+				mundo[i][j] = mundoInicial[i][j];
+			}
+		}
 	}
 	
 	/**
@@ -268,9 +274,99 @@ public class Mundo {
 	// é que cada célula numa linha ou coluna limítrofe consiga encontrar os seus vizinhos
 	// no lado oposto do mundo.
 	public void iteraMundo(int[] regra) {
-		// COMPLETAR
+		if (regra[0] < 0 || regra[0] > 8 || regra[1] < 0 || regra[1] > 8 ||regra[2] < 0 || regra[2] > 8 ) {
+            throw new IllegalArgumentException("Erro num valor da regra");
+        } else {
+			//Variaveis de apoio
+			int[][] matrizDeApoio = criarMatrizAumentada();
+			int[][] comVizinhos;
+			//modificar mundo
+			for(int i = 0; i< mundo.length; i++){
+				for(int j = 0; j < mundo[i].length ; j++){
+					//criar matriz para verificar vizinhos
+					comVizinhos = criarMatrizVizinhanca(i,j, matrizDeApoio);
+					//Verificar se a ceulua vive atravez da funcao celulaVive()
+					if(celulaVive(comVizinhos, regra)){
+						//atribuir valor 1 se viver
+						atribuiValorCelula(i, j, 1);
+					} else {
+						//atrivuir valor 0 se morrer
+						atribuiValorCelula(i, j, 0);
+					}
+				}
+			}
+		}
 	}
 	
+	/**
+	 * 
+	 * @param linha
+	 * @param coluna
+	 * @param matrizAumentada
+	 * @return
+	 */
+	private int[][] criarMatrizVizinhanca(int linha, int coluna, int[][] matrizAumentada) {
+		int[][] vizinhanca = new int[3][3];
+		//Adaptar da normal para a aumentada
+		linha++;
+		coluna++;
+		//encontrar os vizinhos e encher o array vizinhanca
+		for(int i = 0; i < vizinhanca.length; i++){
+			for(int j = 0; j < vizinhanca[i].length ; j++){
+				//(linha/coluna -1) para encontrar a primeira posicao, +i/j para criar dinamismo
+				vizinhanca[i][j] = matrizAumentada[linha -1 +i][coluna -1 +j];
+			}
+		}
+		return vizinhanca;
+	}
+
+	/**
+	 * Cria a matriz aumentada que tem: 
+	 * 1 coluna extra a esquerda por reflexao 
+	 * 1 coluna extra a direita por reflexao 
+	 * 1 linha extra a esquerda por reflexao 
+	 * 1 linha extra a direita por reflexao 
+	 * @return
+	 */
+	private int[][] criarMatrizAumentada() {
+		//Criar matriz com uma linha extra em cima e outra em baixo e uma coluna 
+		//extra a esquerda e outra a direita
+		int[][] aumentada = new int[mundo.length+2][mundo[0].length+2]; 
+		for(int i = 0; i < aumentada.length; i++){
+			for(int j = 0; j < aumentada[i].length; j++){
+				//Extremo superior esquerdo
+				if(i == 0 && j == 0){
+					aumentada[i][j] = valorDaCelula(mundo.length-1, mundo[0].length-1);
+				//Extremo superior direito
+				} else if(i == 0 && j == aumentada[i].length-1) {
+					aumentada[i][j] = valorDaCelula(mundo.length-1, 0);
+				//Extremo inferior esquerdo
+				} else if(i == aumentada.length -1 && j == 0) {
+					aumentada[i][j] = valorDaCelula(0,mundo[0].length-1);
+				//Extremo inferior direito
+				} else if(i == aumentada.length -1 && j == aumentada[i].length -1) {
+					aumentada[i][j] = valorDaCelula(0,0);
+				//1 linha espelho
+				} else if (i == 0) {
+					aumentada[i][j] = valorDaCelula(mundo.length-1, j-1);
+				//2 linha espelho
+				} else if (i == aumentada.length-1) {
+					aumentada[i][j] = valorDaCelula(0, j-1);
+				//1 coluna espelho
+				} else if (j == 0) {
+					aumentada[i][j] = valorDaCelula(i-1, mundo[0].length-1);
+				//2 coluna espelho
+				} else if (j == aumentada[i].length-1) {
+					aumentada[i][j] = valorDaCelula(i-1, 0);
+				//Restante matriz
+				} else {
+					aumentada[i][j] = valorDaCelula(i-1, j-1);
+				}
+			}
+		}
+		return aumentada;
+	}
+
 	/**
 	 * Itera o mundo n vezes, de acordo com a regra.
 	 * 
@@ -279,7 +375,13 @@ public class Mundo {
 	 * @requires cada elemento de regra está entre 0 e 8 inclusive
 	 */
 	public void iteraMundoNgeracoes(int n, int[] regra) {
-		// COMPLETAR
+		if (regra[0] < 0 || regra[0] > 8 || regra[1] < 0 || regra[1] > 8 ||regra[2] < 0 || regra[2] > 8 ) {
+            throw new IllegalArgumentException("Erro num valor da regra");
+        } else {
+			for(int i = 0; i<n; i++){
+				iteraMundo(regra);
+			}
+		}
 	}
 	
 	/**
