@@ -237,7 +237,11 @@ public class Mundo {
 	 * @return 0 ou 1, conforme o valor da célula
 	 */
 	public int valorDaCelula(int linha, int coluna) {
-		return mundo[linha][coluna]; // alterar
+		if (linha < 0 || coluna < 0 || linha > numLinhas || coluna > numColunas ) {
+            throw new IllegalArgumentException("Erro no valor linha ou coluna");
+        } else {
+			return mundo[linha][coluna];
+		}
 	}
 	
 	/**
@@ -287,7 +291,16 @@ public class Mundo {
 	 *  cada linha impressa termina com um espaço, que se segue a '.' ou a 'X'.
 	 */
 	public void mostraMundo() {
-		// COMPLETAR
+		for(int i = 0; i < mundo.length; i++){
+			for(int j = 0; j < mundo[i].length; j++){
+				if(valorDaCelula(i, j) == 0){
+					System.out.print(". ");
+				} else {
+					System.out.print("X ");
+				} 
+			}
+			System.out.println("\n");	
+		}
 	}
 
 	/**
