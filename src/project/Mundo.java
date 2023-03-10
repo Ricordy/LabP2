@@ -197,7 +197,12 @@ public class Mundo {
 	 * Reinicializa o mundo, tornando todas as suas células mortas.
 	 */
 	public void zeraMundo() {
-		// COMPLETAR
+		//Itera todo o array mundo e coloca todas as posições a 0
+		for(int i = 0; i < mundo.length; i++){
+			for(int j = 0; j < mundo[i].length; j++){
+				mundo[i][j] = 0;
+			}	
+		}
 	}
 	
 	/**
