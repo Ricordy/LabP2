@@ -33,11 +33,17 @@ public class Mundo {
 		//Atribuir valores as variavies globais
 		numLinhas = mundoInicial.length;
 		numColunas = mundoInicial[0].length;
+		//verificar o tamanho do tabuleiro antes de proseeguir
 		if (numLinhas < 2 || numColunas < 2) {
             throw new IllegalArgumentException("Mundo demasiado pequeno!");
         }
-		//verificar o tamanho do tabuleiro antes de proseeguir
-		mundo = mundoInicial;
+		// criar uma copia do array copiando celula a celula para evitar referenciar a variavel original
+		mundo = new int[numLinhas][numColunas];
+		for (int i = 0; i < numLinhas; i++) {
+			for (int j = 0; j < numColunas; j++) {
+				mundo[i][j] = mundoInicial[i][j];
+			}
+		}
 	}
 	
 	/**
@@ -268,36 +274,28 @@ public class Mundo {
 	// é que cada célula numa linha ou coluna limítrofe consiga encontrar os seus vizinhos
 	// no lado oposto do mundo.
 	public void iteraMundo(int[] regra) {
-		int[][] matrizDeApoio = criarMatrizAumentada();
-		int[][] comVizinhos;
-		System.out.println("normal");
-		for(int i = 0; i< mundo.length; i++){
-			for(int j = 0; j < mundo[i].length ; j++){
-				System.out.print(mundo[i][j]);
-			}
-			System.out.println("");
-		}
-		System.out.println("ampliada");
-		for(int i = 0; i< matrizDeApoio.length; i++){
-			for(int j = 0; j < matrizDeApoio[i].length ; j++){
-				System.out.print(matrizDeApoio[i][j]);
-			}
-			System.out.println("");
-		}
-
-		for(int i = 0; i< mundo.length; i++){
-			for(int j = 0; j < mundo[i].length ; j++){
-				comVizinhos = criarMatrizVizinhanca(i,j, matrizDeApoio);
-				if(celulaVive(comVizinhos, regra)){
-					atribuiValorCelula(i, j, 1);
-				} else {
-					atribuiValorCelula(i, j, 0);
+		if (regra[0] < 0 || regra[0] > 8 || regra[1] < 0 || regra[1] > 8 ||regra[2] < 0 || regra[2] > 8 ) {
+            throw new IllegalArgumentException("Erro num valor da regra");
+        } else {
+			//Variaveis de apoio
+			int[][] matrizDeApoio = criarMatrizAumentada();
+			int[][] comVizinhos;
+			//modificar mundo
+			for(int i = 0; i< mundo.length; i++){
+				for(int j = 0; j < mundo[i].length ; j++){
+					//criar matriz para verificar vizinhos
+					comVizinhos = criarMatrizVizinhanca(i,j, matrizDeApoio);
+					//Verificar se a ceulua vive atravez da funcao celulaVive()
+					if(celulaVive(comVizinhos, regra)){
+						//atribuir valor 1 se viver
+						atribuiValorCelula(i, j, 1);
+					} else {
+						//atrivuir valor 0 se morrer
+						atribuiValorCelula(i, j, 0);
+					}
 				}
 			}
 		}
-		
-		
-		
 	}
 	
 	/**
@@ -309,10 +307,13 @@ public class Mundo {
 	 */
 	private int[][] criarMatrizVizinhanca(int linha, int coluna, int[][] matrizAumentada) {
 		int[][] vizinhanca = new int[3][3];
+		//Adaptar da normal para a aumentada
 		linha++;
 		coluna++;
+		//encontrar os vizinhos e encher o array vizinhanca
 		for(int i = 0; i < vizinhanca.length; i++){
 			for(int j = 0; j < vizinhanca[i].length ; j++){
+				//(linha/coluna -1) para encontrar a primeira posicao, +i/j para criar dinamismo
 				vizinhanca[i][j] = matrizAumentada[linha -1 +i][coluna -1 +j];
 			}
 		}
@@ -374,7 +375,13 @@ public class Mundo {
 	 * @requires cada elemento de regra está entre 0 e 8 inclusive
 	 */
 	public void iteraMundoNgeracoes(int n, int[] regra) {
-		// COMPLETAR
+		if (regra[0] < 0 || regra[0] > 8 || regra[1] < 0 || regra[1] > 8 ||regra[2] < 0 || regra[2] > 8 ) {
+            throw new IllegalArgumentException("Erro num valor da regra");
+        } else {
+			for(int i = 0; i<n; i++){
+				iteraMundo(regra);
+			}
+		}
 	}
 	
 	/**
