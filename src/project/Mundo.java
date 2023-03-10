@@ -154,8 +154,35 @@ public class Mundo {
 	 */
 	// visibilidade poderia ser private ou package, mas fica public por simplicidade
 	public static boolean celulaVive(int[][] submatriz, int[] regra) {
-		// COMPLETAR
-		return true; // alterar
+		//Verificar quantos vizinhos vivos tem a celula central
+		int vizinhosVivos = 0; 
+		for(int i = 0; i < submatriz.length; i++){
+			for(int j = 0; j < submatriz[i].length; j++){
+				if(submatriz[i][j] == 1){
+					vizinhosVivos++;
+				}
+			}	
+		}
+		//Verificar se celula esta viva no inicio e aplicar as leis para entender se se mantém viva
+		if(submatriz[1][1] == 1){
+			//Retirar a propria celula da conta vizinhosVivos
+			vizinhosVivos--;
+			//Regras para morrer caso esteja viva
+			if(vizinhosVivos > regra[0] || vizinhosVivos < regra[1]){
+				return false;
+			} else {
+				return true;
+			}
+		//No caso da celula estar morta verificar se renasce
+		} else {
+			//Verificar se o numero de vizinhos vivos eh suficiente para renascer
+			if(vizinhosVivos == regra[2]){
+				return true;
+			} else {
+				return false;
+			}
+
+		}
 	}
 	
 	public int getNumLinhas() {
