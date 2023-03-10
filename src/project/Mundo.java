@@ -200,7 +200,7 @@ public class Mundo {
 		//Itera todo o array mundo e coloca todas as posições a 0
 		for(int i = 0; i < mundo.length; i++){
 			for(int j = 0; j < mundo[i].length; j++){
-				mundo[i][j] = 0;
+				atribuiValorCelula(i, j, 0);
 			}	
 		}
 	}
@@ -218,7 +218,13 @@ public class Mundo {
 	 * @requires valor é 0 ou 1
 	 */
 	public void atribuiValorCelula(int linha, int coluna, int valor) {
-		// COMPLETAR
+		if (linha < 0 || coluna < 0 || linha > numLinhas || coluna > numColunas ) {
+            throw new IllegalArgumentException("Erro no valor linha ou coluna");
+        } else if (valor < 0 || valor > 1){
+			throw new IllegalArgumentException("Erro, valor deve ser 0 ou 1");
+		} else {
+			mundo[linha][coluna] = valor;
+		}
 	}
 	
 	/**
