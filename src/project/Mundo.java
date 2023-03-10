@@ -268,9 +268,104 @@ public class Mundo {
 	// é que cada célula numa linha ou coluna limítrofe consiga encontrar os seus vizinhos
 	// no lado oposto do mundo.
 	public void iteraMundo(int[] regra) {
-		// COMPLETAR
+		int[][] matrizDeApoio = criarMatrizAumentada();
+		int[][] comVizinhos;
+		System.out.println("normal");
+		for(int i = 0; i< mundo.length; i++){
+			for(int j = 0; j < mundo[i].length ; j++){
+				System.out.print(mundo[i][j]);
+			}
+			System.out.println("");
+		}
+		System.out.println("ampliada");
+		for(int i = 0; i< matrizDeApoio.length; i++){
+			for(int j = 0; j < matrizDeApoio[i].length ; j++){
+				System.out.print(matrizDeApoio[i][j]);
+			}
+			System.out.println("");
+		}
+
+		for(int i = 0; i< mundo.length; i++){
+			for(int j = 0; j < mundo[i].length ; j++){
+				comVizinhos = criarMatrizVizinhanca(i,j, matrizDeApoio);
+				if(celulaVive(comVizinhos, regra)){
+					atribuiValorCelula(i, j, 1);
+				} else {
+					atribuiValorCelula(i, j, 0);
+				}
+			}
+		}
+		
+		
+		
 	}
 	
+	/**
+	 * 
+	 * @param linha
+	 * @param coluna
+	 * @param matrizAumentada
+	 * @return
+	 */
+	private int[][] criarMatrizVizinhanca(int linha, int coluna, int[][] matrizAumentada) {
+		int[][] vizinhanca = new int[3][3];
+		linha++;
+		coluna++;
+		for(int i = 0; i < vizinhanca.length; i++){
+			for(int j = 0; j < vizinhanca[i].length ; j++){
+				vizinhanca[i][j] = matrizAumentada[linha -1 +i][coluna -1 +j];
+			}
+		}
+		return vizinhanca;
+	}
+
+	/**
+	 * Cria a matriz aumentada que tem: 
+	 * 1 coluna extra a esquerda por reflexao 
+	 * 1 coluna extra a direita por reflexao 
+	 * 1 linha extra a esquerda por reflexao 
+	 * 1 linha extra a direita por reflexao 
+	 * @return
+	 */
+	private int[][] criarMatrizAumentada() {
+		//Criar matriz com uma linha extra em cima e outra em baixo e uma coluna 
+		//extra a esquerda e outra a direita
+		int[][] aumentada = new int[mundo.length+2][mundo[0].length+2]; 
+		for(int i = 0; i < aumentada.length; i++){
+			for(int j = 0; j < aumentada[i].length; j++){
+				//Extremo superior esquerdo
+				if(i == 0 && j == 0){
+					aumentada[i][j] = valorDaCelula(mundo.length-1, mundo[0].length-1);
+				//Extremo superior direito
+				} else if(i == 0 && j == aumentada[i].length-1) {
+					aumentada[i][j] = valorDaCelula(mundo.length-1, 0);
+				//Extremo inferior esquerdo
+				} else if(i == aumentada.length -1 && j == 0) {
+					aumentada[i][j] = valorDaCelula(0,mundo[0].length-1);
+				//Extremo inferior direito
+				} else if(i == aumentada.length -1 && j == aumentada[i].length -1) {
+					aumentada[i][j] = valorDaCelula(0,0);
+				//1 linha espelho
+				} else if (i == 0) {
+					aumentada[i][j] = valorDaCelula(mundo.length-1, j-1);
+				//2 linha espelho
+				} else if (i == aumentada.length-1) {
+					aumentada[i][j] = valorDaCelula(0, j-1);
+				//1 coluna espelho
+				} else if (j == 0) {
+					aumentada[i][j] = valorDaCelula(i-1, mundo[0].length-1);
+				//2 coluna espelho
+				} else if (j == aumentada[i].length-1) {
+					aumentada[i][j] = valorDaCelula(i-1, 0);
+				//Restante matriz
+				} else {
+					aumentada[i][j] = valorDaCelula(i-1, j-1);
+				}
+			}
+		}
+		return aumentada;
+	}
+
 	/**
 	 * Itera o mundo n vezes, de acordo com a regra.
 	 * 
