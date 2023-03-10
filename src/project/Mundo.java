@@ -320,7 +320,18 @@ public class Mundo {
 	 * @param nomeFicheiro é uma string que representa um path válido para um ficheiro
 	 */
 	public void escreveMundo(String nomeFicheiro)  throws IOException {
-		// COMPLETAR
+		PrintWriter writer = new PrintWriter(new File(nomeFicheiro));
+    	for(int i = 0; i < mundo.length; i++) {
+        	for(int j = 0; j < mundo[i].length; j++) {
+            	if(valorDaCelula(i, j) == 0){
+                	writer.print(". ");
+            	} else {
+                writer.print("X ");
+            	}
+        	}
+        	writer.print("\n");    
+    	}
+    	writer.close();
 	}
 		
 	/**
@@ -332,8 +343,18 @@ public class Mundo {
 	 */
 	@Override
 	public String toString() {
-		// COMPLETAR
-		return ""; //alterar
+		StringBuilder resultado = new StringBuilder();
+		for(int i = 0; i < mundo.length; i++){
+			for(int j = 0; j < mundo[i].length; j++){
+				if(valorDaCelula(i, j) == 0){
+					resultado.append(". ");
+				} else {
+					resultado.append("X ");
+				} 
+			}
+			resultado.append("\n");	
+		}
+		return resultado.toString();
 	}
 
 	/**
